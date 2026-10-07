@@ -1,5 +1,5 @@
-// Registration page — creates a new user account.
-// Role defaults to employee; admins can change roles via the user management page.
+// Registration page — polished card with grid layout.
+// Role defaults to employee; admins can change roles via user management.
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,69 +38,150 @@ export default function RegisterPage() {
   async function onSubmit(data: FormValues) {
     try {
       await register({ ...data, role: "employee" }).unwrap();
-      toast.success("Account created. Please log in.");
+      toast.success("Account created! Please sign in.");
       navigate("/login");
     } catch (err: unknown) {
       const error = err as { data?: { detail?: string } };
       const detail = error?.data?.detail;
-      const message =
-        typeof detail === "string" ? detail : "Registration failed. Please try again.";
-      toast.error(message);
+      toast.error(typeof detail === "string" ? detail : "Registration failed. Try again.");
     }
   }
 
-  const Field = ({
-    name,
-    label,
-    type = "text",
-  }: {
-    name: keyof FormValues;
-    label: string;
-    type?: string;
-  }) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-      <input
-        {...rhfRegister(name)}
-        type={type}
-        className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      {errors[name] && (
-        <p className="text-red-500 text-xs mt-1">{errors[name]?.message}</p>
-      )}
-    </div>
-  );
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow w-full max-w-lg">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Create Account</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
-          <Field name="first_name" label="First Name" />
-          <Field name="last_name" label="Last Name" />
-          <div className="col-span-2">
-            <Field name="email" label="Email" type="email" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-lg">
+        {/* Brand */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 shadow-lg mb-4">
+            <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
           </div>
-          <Field name="username" label="Username" />
-          <Field name="department" label="Department" />
-          <Field name="password" label="Password" type="password" />
-          <Field name="confirm_password" label="Confirm Password" type="password" />
-          <div className="col-span-2">
+          <h1 className="text-2xl font-bold text-white tracking-tight">Create Your Account</h1>
+          <p className="text-slate-400 text-sm mt-1">Join the Leave Management System</p>
+        </div>
+
+        {/* Form card */}
+        <div className="bg-white rounded-2xl shadow-2xl p-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* Name row */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label" htmlFor="first_name">First name</label>
+                <input
+                  id="first_name"
+                  {...rhfRegister("first_name")}
+                  type="text"
+                  placeholder="Alice"
+                  className={`input-field mt-1 ${errors.first_name ? "border-red-400" : ""}`}
+                />
+                {errors.first_name && <p className="error-text mt-1">{errors.first_name.message}</p>}
+              </div>
+              <div>
+                <label className="label" htmlFor="last_name">Last name</label>
+                <input
+                  id="last_name"
+                  {...rhfRegister("last_name")}
+                  type="text"
+                  placeholder="Johnson"
+                  className={`input-field mt-1 ${errors.last_name ? "border-red-400" : ""}`}
+                />
+                {errors.last_name && <p className="error-text mt-1">{errors.last_name.message}</p>}
+              </div>
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="label" htmlFor="email">Email address</label>
+              <input
+                id="email"
+                {...rhfRegister("email")}
+                type="email"
+                placeholder="alice@company.com"
+                className={`input-field mt-1 ${errors.email ? "border-red-400" : ""}`}
+              />
+              {errors.email && <p className="error-text mt-1">{errors.email.message}</p>}
+            </div>
+
+            {/* Username + Department */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label" htmlFor="username">Username</label>
+                <input
+                  id="username"
+                  {...rhfRegister("username")}
+                  type="text"
+                  placeholder="alice.j"
+                  className={`input-field mt-1 ${errors.username ? "border-red-400" : ""}`}
+                />
+                {errors.username && <p className="error-text mt-1">{errors.username.message}</p>}
+              </div>
+              <div>
+                <label className="label" htmlFor="department">Department</label>
+                <input
+                  id="department"
+                  {...rhfRegister("department")}
+                  type="text"
+                  placeholder="Engineering"
+                  className={`input-field mt-1 ${errors.department ? "border-red-400" : ""}`}
+                />
+                {errors.department && <p className="error-text mt-1">{errors.department.message}</p>}
+              </div>
+            </div>
+
+            {/* Password row */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label" htmlFor="password">Password</label>
+                <input
+                  id="password"
+                  {...rhfRegister("password")}
+                  type="password"
+                  placeholder="••••••••"
+                  className={`input-field mt-1 ${errors.password ? "border-red-400" : ""}`}
+                />
+                {errors.password && <p className="error-text mt-1">{errors.password.message}</p>}
+              </div>
+              <div>
+                <label className="label" htmlFor="confirm_password">Confirm password</label>
+                <input
+                  id="confirm_password"
+                  {...rhfRegister("confirm_password")}
+                  type="password"
+                  placeholder="••••••••"
+                  className={`input-field mt-1 ${errors.confirm_password ? "border-red-400" : ""}`}
+                />
+                {errors.confirm_password && (
+                  <p className="error-text mt-1">{errors.confirm_password.message}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Submit */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-2 rounded text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+              className="btn-primary w-full justify-center py-2.5 mt-2"
             >
-              {isLoading ? "Creating account..." : "Register"}
+              {isLoading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Creating account…
+                </>
+              ) : (
+                "Create Account"
+              )}
             </button>
-          </div>
-        </form>
-        <p className="text-sm text-center mt-4 text-gray-600">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            Sign in
-          </Link>
-        </p>
+          </form>
+
+          <p className="text-sm text-center text-slate-500 mt-6">
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-600 font-medium hover:underline">
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
